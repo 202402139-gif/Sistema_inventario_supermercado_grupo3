@@ -1,0 +1,105 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fw-bold mb-1">Dashboard</h2>
+    <p class="text-muted mb-0">Resumen del supermercado</p>
+  </div>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat">
+    
+      <div>
+        <small>Productos</small>
+        <strong>{{resumen?.productos ?? '—'}}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat">
+     
+      <div>
+        <small>Proveedores</small>
+        <strong>{{resumen?.proveedores ?? '—'}}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat">
+     
+      <div>
+        <small>Órdenes totales</small>
+        <strong>{{resumen?.ordenes ?? '—'}}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat">
+      
+      <div>
+        <small>Pendientes</small>
+        <strong>{{resumen?.pendientes ?? '—'}}</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3">Productos con stock bajo</h5>
+
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let b of bajos">
+                <td>{{b.codigo}}</td>
+                <td>
+                  {{b.nombre}}
+                  <div class="small text-muted">{{b.categoria_nombre}}</div>
+                </td>
+                <td>
+                  <span class="badge text-bg-danger">{{b.stock_actual}} / {{b.stock_minimo}}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="!bajos.length" class="text-muted">No hay productos con stock bajo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3">Órdenes de compra por mes</h5>
+
+        <div class="chart" *ngIf="meses.length">
+          <div class="bar-item" *ngFor="let m of meses">
+            <div class="bar" [style.height.%]="(m.total / max) * 100">
+              <span>{{m.total}}</span>
+            </div>
+            <small>{{m.mes}}</small>
+          </div>
+        </div>
+
+        <div *ngIf="!meses.length" class="text-muted">Aún no hay órdenes registradas.</div>
+      </div>
+    </div>
+  </div>
+</div>

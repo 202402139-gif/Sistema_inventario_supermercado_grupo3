@@ -1,0 +1,97 @@
+<div class="mb-4">
+  <h2 class="fw-bold">Órdenes de compra</h2>
+  <p class="text-muted"></p>
+</div>
+
+<div *ngIf="mensaje" class="alert alert-success">{{mensaje}}</div>
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-body">
+        <h5>Nueva orden</h5>
+
+        <label class="form-label">Proveedor</label>
+        <select class="form-select mb-3" [(ngModel)]="proveedor_id">
+          <option [ngValue]="null">Seleccionar...</option>
+          <option *ngFor="let p of proveedores" [ngValue]="p.id">{{p.nombre}}</option>
+        </select>
+
+        <div class="row g-2">
+          <div class="col-8">
+            <select class="form-select" [(ngModel)]="producto_id">
+              <option [ngValue]="null">Producto...</option>
+              <option *ngFor="let p of productos" [ngValue]="p.id">{{p.codigo}} — {{p.nombre}}</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <input class="form-control" type="number" min="1" [(ngModel)]="cantidad">
+          </div>
+        </div>
+
+        <button class="btn btn-outline-success w-100 mt-2" (click)="agregar()">+ Agregar producto</button>
+
+        <ul class="list-group my-3" *ngIf="detalles.length">
+          <li class="list-group-item d-flex justify-content-between" *ngFor="let d of detalles; let i = index">
+            <span>{{d.nombre}} × {{d.cantidad}}</span>
+            <button class="btn btn-sm btn-outline-danger" (click)="quitar(i)">×</button>
+          </li>
+        </ul>
+
+        <button class="btn btn-success w-100" [disabled]="!proveedor_id || !detalles.length" (click)="crear()">Crear orden</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex gap-2 mb-3">
+          <select class="form-select" [(ngModel)]="filtro" (change)="cargar()">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="completada">Completadas</option>
+            <option value="cancelada">Canceladas</option>
+          </select>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Proveedor</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let o of ordenes">
+                <td>{{o.proveedor_nombre}}</td>
+                <td>{{o.fecha_creacion | date:'dd/MM/yyyy'}}</td>
+                <td>
+                  <span class="badge"
+                        [class.text-bg-warning]="o.estado === 'pendiente'"
+                        [class.text-bg-success]="o.estado === 'completada'"
+                        [class.text-bg-secondary]="o.estado === 'cancelada'">
+                    {{o.estado}}
+                  </span>
+                </td>
+                <td>
+                  <ng-container *ngIf="o.estado === 'pendiente'">
+                    <button class="btn btn-sm btn-outline-success me-1" (click)="cambiar(o.id, 'completada')">Recibir</button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="cambiar(o.id, 'cancelada')">Cancelar</button>
+                  </ng-container>
+                  <span *ngIf="o.estado !== 'pendiente'" class="text-muted small">Sin acciones</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="!ordenes.length" class="text-muted">No hay órdenes registradas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

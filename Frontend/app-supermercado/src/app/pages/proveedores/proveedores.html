@@ -1,0 +1,60 @@
+<div class="mb-4">
+  <h2 class="fw-bold">Proveedores</h2>
+  <p class="text-muted"></p>
+</div>
+
+<div *ngIf="mensaje" class="alert alert-success">{{mensaje}}</div>
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+<div class="row g-4">
+  <div class="col-lg-4" *ngIf="auth.usuario()?.rol === 'administrador'">
+    <div class="card">
+      <div class="card-body">
+        <h5>{{editando ? 'Editar proveedor' : 'Nuevo proveedor'}}</h5>
+
+        <form (ngSubmit)="guardar()">
+          <input class="form-control mb-2" [(ngModel)]="form.nombre" name="nombre" placeholder="Nombre" required>
+          <input class="form-control mb-2" [(ngModel)]="form.contacto" name="contacto" placeholder="Contacto">
+          <input class="form-control mb-2" [(ngModel)]="form.telefono" name="telefono" placeholder="Teléfono">
+          <input class="form-control mb-2" type="email" [(ngModel)]="form.email" name="email" placeholder="Email">
+          <input class="form-control mb-3" [(ngModel)]="form.direccion" name="direccion" placeholder="Dirección">
+
+          <button class="btn btn-success me-2">{{editando ? 'Actualizar' : 'Guardar'}}</button>
+          <button *ngIf="editando" type="button" class="btn btn-outline-secondary" (click)="cancelar()">Cancelar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div [class.col-lg-8]="auth.usuario()?.rol === 'administrador'" [class.col-12]="auth.usuario()?.rol !== 'administrador'">
+    <div class="card">
+      <div class="card-body table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Proveedor</th>
+              <th>Contacto</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+              <th>Dirección</th>
+              <th *ngIf="auth.usuario()?.rol === 'administrador'">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of proveedores">
+              <td>{{p.nombre}}</td>
+              <td>{{p.contacto || '—'}}</td>
+              <td>{{p.telefono || '—'}}</td>
+              <td>{{p.email || '—'}}</td>
+              <td>{{p.direccion || '—'}}</td>
+              <td *ngIf="auth.usuario()?.rol === 'administrador'">
+                <button class="btn btn-sm btn-outline-success me-1" (click)="editar(p)">Editar</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="eliminar(p.id!)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

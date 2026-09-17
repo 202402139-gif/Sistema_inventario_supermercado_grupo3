@@ -1,0 +1,83 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fw-bold">Productos</h2>
+    <p class="text-muted"></p>
+  </div>
+</div>
+
+<div *ngIf="mensaje" class="alert alert-success">{{mensaje}}</div>
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+<div class="row g-4">
+  <div class="col-lg-4" *ngIf="auth.usuario()?.rol === 'administrador'">
+    <div class="card form-card">
+      <div class="card-body">
+        <h5>{{editando ? 'Editar producto' : 'Nuevo producto'}}</h5>
+
+        <form (ngSubmit)="guardar()">
+          <input class="form-control mb-2" [(ngModel)]="form.codigo" name="codigo" placeholder="Código" required>
+          <input class="form-control mb-2" [(ngModel)]="form.nombre" name="nombre" placeholder="Nombre" required>
+          <textarea class="form-control mb-2" [(ngModel)]="form.descripcion" name="descripcion" placeholder="Descripción"></textarea>
+          <input class="form-control mb-2" type="number" step="0.01" [(ngModel)]="form.precio" name="precio" placeholder="Precio" required>
+
+          <div class="row">
+            <div class="col">
+              <input class="form-control mb-2" type="number" [(ngModel)]="form.stock_minimo" name="min" placeholder="Stock mínimo">
+            </div>
+            <div class="col">
+              <input class="form-control mb-2" type="number" [(ngModel)]="form.stock_actual" name="actual" placeholder="Stock actual">
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-success">{{editando ? 'Actualizar' : 'Guardar'}}</button>
+            <button *ngIf="editando" type="button" class="btn btn-outline-secondary" (click)="cancelar()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div [class.col-lg-8]="auth.usuario()?.rol === 'administrador'" [class.col-12]="auth.usuario()?.rol !== 'administrador'">
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th *ngIf="auth.usuario()?.rol === 'administrador'">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of productos">
+                <td>{{p.codigo}}</td>
+                <td>
+                  <strong>{{p.nombre}}</strong>
+                  <div class="small text-muted">{{p.categoria_nombre}}</div>
+                </td>
+                <td>L {{p.precio | number:'1.2-2'}}</td>
+                <td>{{p.stock_actual}} / {{p.stock_minimo}}</td>
+                <td>
+                  <span class="badge" [class.text-bg-danger]="p.alerta_stock_bajo" [class.text-bg-success]="!p.alerta_stock_bajo">
+                    {{p.alerta_stock_bajo ? 'Stock bajo' : 'Normal'}}
+                  </span>
+                </td>
+                <td *ngIf="auth.usuario()?.rol === 'administrador'">
+                  <button class="btn btn-sm btn-outline-success me-1" (click)="editar(p)">Editar</button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="eliminar(p.id!)">Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="!productos.length" class="text-muted">No hay productos registrados.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
